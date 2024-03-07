@@ -15,7 +15,7 @@ public class MyGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        log.info("Request: {}", request);
+        log.info("Request Path: {}", request.getPath());
         return chain.filter(exchange);
     }
 

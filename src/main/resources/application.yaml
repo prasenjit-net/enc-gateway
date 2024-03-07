@@ -1,10 +1,12 @@
-spring:
-  cloud:
-    gateway:
-      routes:
-        - id: test_route
-          uri: http://httpbin.org:80
-          predicates:
-            - Path=/get
-          filters:
-            - AddRequestHeader=X-Request-Test, foo
+gateway:
+  routes:
+    gr1:
+      paths:
+        - /pm
+        - /pm1
+      dest-path: /post-map
+      uri: http://localhost:8080
+      pci-req-paths:
+        - address.zip
+      pci-resp-paths:
+        - address.zip

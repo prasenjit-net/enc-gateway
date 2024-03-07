@@ -14,7 +14,9 @@ public class ReplaceController {
     @PostMapping("/encode")
     public PciString encode(@RequestBody PciString pciString) {
         log.info("Encoding {}", pciString);
-        String encoded = Base64.getUrlEncoder().withoutPadding().encodeToString(pciString.value().getBytes());
+        String encoded = Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(pciString.value().getBytes());
         return new PciString(encoded);
     }
 

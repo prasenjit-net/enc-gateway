@@ -35,3 +35,25 @@ Content-Type: application/json
     }
   ]
 }
+
+###
+POST http://localhost:8080/pm1
+Content-Type: application/json
+
+{
+  "name": "antony",
+  "address": [
+    {
+      "street": "1st main",
+      "city": "bangalore",
+      "state": "karnataka",
+      "zip": "560001"
+    },
+    {
+      "street": "2nd main",
+      "city": "chennai",
+      "state": "tamilnadu",
+      "zip": "600001"
+    }
+  ]
+}
