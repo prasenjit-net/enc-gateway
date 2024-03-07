@@ -12,7 +12,7 @@ public class RelayController {
 
     @PostMapping("/post-map")
     public Person postMap(@RequestBody Person person) {
-        log.info("Thread name is {}", Thread.currentThread().getName());
+        log.info("Received {}", person);
         return person;
     }
 }
