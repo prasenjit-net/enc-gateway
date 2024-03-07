@@ -30,17 +30,15 @@ public class RouteConfig {
     @Bean
     RouteLocator myRoutes(RouteLocatorBuilder builder, EncGatewayProperties properties) {
         RouteLocatorBuilder.Builder routes = builder.routes();
-        properties.routes().forEach((k, v) -> {
-            routes.route(k, r -> r
-                    .path(v.paths())
-                    .filters(f -> f
-                            .setPath(v.destPath())
-                            .modifyRequestBody(JsonNode.class, JsonNode.class, handleRequestBody(v.pciReqPaths()))
-                            .modifyResponseBody(JsonNode.class, JsonNode.class, handleResponseBody(v.pciRespPaths()))
-                    )
-                    .uri(v.uri())
-            );
-        });
+        properties.routes().forEach((k, v) -> routes.route(k, r -> r
+                .path(v.paths())
+                .filters(f -> f
+                        .setPath(v.destPath())
+                        .modifyRequestBody(JsonNode.class, JsonNode.class, handleRequestBody(v.pciReqPaths()))
+                        .modifyResponseBody(JsonNode.class, JsonNode.class, handleResponseBody(v.pciRespPaths()))
+                )
+                .uri(v.uri())
+        ));
         return routes.build();
     }
 
