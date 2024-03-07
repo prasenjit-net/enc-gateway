@@ -30,27 +30,35 @@ public class RouteConfig {
     @Bean
     RouteLocator myRoutes(RouteLocatorBuilder builder, EncGatewayProperties properties) {
         RouteLocatorBuilder.Builder routes = builder.routes();
-        properties.routes().forEach((k, v) -> routes.route(k, r -> r
-                .path(v.paths())
+        properties.routes().forEach(config -> routes.route(config.id(), r -> r
+                .path(config.paths())
                 .filters(f -> f
-                        .setPath(v.destPath())
-                        .modifyRequestBody(JsonNode.class, JsonNode.class, handleRequestBody(v.pciReqPaths()))
-                        .modifyResponseBody(JsonNode.class, JsonNode.class, handleResponseBody(v.pciRespPaths()))
+                        .setPath(config.destPath())
+                        .modifyRequestBody(JsonNode.class, JsonNode.class, handlePciOperation(config.pciReqPaths(), this::encodeOperation))
+                        .modifyResponseBody(JsonNode.class, JsonNode.class, handlePciOperation(config.pciRespPaths(), this::decodeOperation))
                 )
-                .uri(v.uri())
+                .uri(config.uri())
         ));
         return routes.build();
     }
 
-    private RewriteFunction<JsonNode, JsonNode> handleRequestBody(String[] pciReqPaths) {
-        return (exchange, s) -> {
-            log.info("Request: {}", s);
+    private Mono<String> decodeOperation(String value) {
+        return pciClient.decode(new PciString(value)).map(PciString::value);
+    }
+
+    private Mono<String> encodeOperation(String value) {
+        return pciClient.encode(new PciString(value)).map(PciString::value);
+    }
+
+    private RewriteFunction<JsonNode, JsonNode> handlePciOperation(String[] pciPaths, Function<String, Mono<String>> pciOperation) {
+        return (exchange, jsonNode) -> {
+            log.info("Request: {}", jsonNode);
             log.info("Thread name is {}", Thread.currentThread().getName());
-            return Flux.fromArray(pciReqPaths)
-                    .flatMap(path -> replaceValue(s,
+            return Flux.fromArray(pciPaths)
+                    .flatMap(path -> replaceValue(jsonNode,
                             StringUtils.tokenizeToStringArray(path, ".", true, true),
-                            old -> pciClient.encode(new PciString(old)).map(PciString::value)))
-                    .then(Mono.just(s));
+                            pciOperation))
+                    .then(Mono.just(jsonNode));
         };
     }
 
@@ -79,17 +87,5 @@ public class RouteConfig {
                 return Mono.empty();
             }
         }
-    }
-
-    private RewriteFunction<JsonNode, JsonNode> handleResponseBody(String[] pciRespPaths) {
-        return (exchange, s) -> {
-            log.info("Response: {}", s);
-            log.info("Thread name is {}", Thread.currentThread().getName());
-            return Flux.fromArray(pciRespPaths)
-                    .flatMap(path -> replaceValue(s,
-                            StringUtils.tokenizeToStringArray(path, ".", true, true),
-                            old -> pciClient.decode(new PciString(old)).map(PciString::value)))
-                    .then(Mono.just(s));
-        };
     }
 }

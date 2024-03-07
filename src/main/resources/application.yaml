@@ -1,6 +1,6 @@
 gateway:
   routes:
-    gr1:
+    - id: post-map
       paths:
         - /pm
         - /pm1

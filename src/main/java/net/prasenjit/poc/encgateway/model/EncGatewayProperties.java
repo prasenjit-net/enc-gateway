@@ -2,8 +2,8 @@ package net.prasenjit.poc.encgateway.model;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.Map;
+import java.util.List;
 
 @ConfigurationProperties(prefix = "gateway")
-public record EncGatewayProperties(Map<String, RouteConfig> routes) {
+public record EncGatewayProperties(List<RouteConfig> routes) {
 }
