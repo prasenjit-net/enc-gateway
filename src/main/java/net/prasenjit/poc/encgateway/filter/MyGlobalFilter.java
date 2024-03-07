@@ -16,6 +16,7 @@ public class MyGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         log.info("Request Path: {}", request.getPath());
+        log.info("Thread name is {}", Thread.currentThread().getName());
         return chain.filter(exchange);
     }
 

@@ -14,6 +14,7 @@ public class ReplaceController {
     @PostMapping("/encode")
     public PciString encode(@RequestBody PciString pciString) {
         log.info("Encoding {}", pciString);
+        log.info("Thread name is {}", Thread.currentThread().getName());
         String encoded = Base64.getUrlEncoder()
                 .withoutPadding()
                 .encodeToString(pciString.value().getBytes());
@@ -23,6 +24,7 @@ public class ReplaceController {
     @PostMapping("/decode")
     public PciString decode(@RequestBody PciString pciString) {
         log.info("Decoding {}", pciString);
+        log.info("Thread name is {}", Thread.currentThread().getName());
         String encoded = new String(Base64.getUrlDecoder().decode(pciString.value()));
         return new PciString(encoded);
     }

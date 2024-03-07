@@ -47,6 +47,7 @@ public class RouteConfig {
     private RewriteFunction<JsonNode, JsonNode> handleRequestBody(String[] pciReqPaths) {
         return (exchange, s) -> {
             log.info("Request: {}", s);
+            log.info("Thread name is {}", Thread.currentThread().getName());
             return Flux.fromArray(pciReqPaths)
                     .flatMap(path -> replaceValue(s,
                             StringUtils.tokenizeToStringArray(path, ".", true, true),
@@ -85,6 +86,7 @@ public class RouteConfig {
     private RewriteFunction<JsonNode, JsonNode> handleResponseBody(String[] pciRespPaths) {
         return (exchange, s) -> {
             log.info("Response: {}", s);
+            log.info("Thread name is {}", Thread.currentThread().getName());
             return Flux.fromArray(pciRespPaths)
                     .flatMap(path -> replaceValue(s,
                             StringUtils.tokenizeToStringArray(path, ".", true, true),
